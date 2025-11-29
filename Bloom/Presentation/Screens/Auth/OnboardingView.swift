@@ -8,11 +8,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @State private var currentPage = 0
-    @State private var selectedGoals: Set<WellnessGoal> = []
+    @State private var viewModel = OnboardingViewModel()
     @State private var navigateToAuth = false
-
-    private let totalPages = 4
 
     var body: some View {
         NavigationStack {
@@ -21,7 +18,7 @@ struct OnboardingView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    TabView(selection: $currentPage) {
+                    TabView(selection: $viewModel.currentPage) {
                         WelcomeScreen()
                             .tag(0)
 
@@ -39,34 +36,33 @@ struct OnboardingView: View {
                         )
                         .tag(2)
 
-                        GoalSelectionScreen(selectedGoals: $selectedGoals)
+                        GoalSelectionScreen(viewModel: viewModel)
                             .tag(3)
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
-                    .animation(.bloomSmooth, value: currentPage)
+                    .animation(.bloomSmooth, value: viewModel.currentPage)
 
                     VStack(spacing: Spacing.lg) {
-                        PageIndicator(currentPage: currentPage, totalPages: totalPages)
+                        PageIndicator(currentPage: viewModel.currentPage, totalPages: viewModel.totalPages)
 
-                        if currentPage < totalPages - 1 {
+                        if !viewModel.isLastPage {
                             PrimaryButton(title: "Continue") {
-                                withAnimation(.bloomSmooth) {
-                                    currentPage += 1
-                                }
+                                viewModel.nextPage()
                             }
                         } else {
                             PrimaryButton(title: "Get Started") {
-                                navigateToAuth = true
+                                Task {
+                                    await viewModel.completeOnboarding()
+                                    navigateToAuth = true
+                                }
                             }
-                            .disabled(selectedGoals.isEmpty)
-                            .opacity(selectedGoals.isEmpty ? 0.5 : 1.0)
+                            .disabled(!viewModel.isGetStartedEnabled)
+                            .opacity(viewModel.isGetStartedEnabled ? 1.0 : 0.5)
                         }
 
-                        if currentPage > 0 {
+                        if !viewModel.isFirstPage {
                             Button(action: {
-                                withAnimation(.bloomSmooth) {
-                                    currentPage -= 1
-                                }
+                                viewModel.previousPage()
                             }) {
                                 Text("Back")
                                     .font(.bloomBodyLarge)
@@ -166,16 +162,7 @@ struct FeatureScreen: View {
 }
 
 struct GoalSelectionScreen: View {
-    @Binding var selectedGoals: Set<WellnessGoal>
-
-    private let goals: [WellnessGoal] = [
-        WellnessGoal(id: "sleep", icon: "moon.stars.fill", title: "Better Sleep", color: .bloomPrimary),
-        WellnessGoal(id: "stress", icon: "heart.fill", title: "Reduce Stress", color: .bloomCoral),
-        WellnessGoal(id: "energy", icon: "bolt.fill", title: "More Energy", color: .bloomGreen),
-        WellnessGoal(id: "mindfulness", icon: "brain.head.profile", title: "Mindfulness", color: .bloomPrimary),
-        WellnessGoal(id: "exercise", icon: "figure.walk", title: "Exercise More", color: .bloomCoral),
-        WellnessGoal(id: "gratitude", icon: "sparkles", title: "Practice Gratitude", color: .bloomGreen)
-    ]
+    let viewModel: OnboardingViewModel
 
     var body: some View {
         VStack(spacing: Spacing.xl) {
@@ -192,18 +179,12 @@ struct GoalSelectionScreen: View {
             .padding(.top, Spacing.xl)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Spacing.md) {
-                ForEach(goals) { goal in
+                ForEach(viewModel.availableGoals) { goal in
                     GoalCard(
                         goal: goal,
-                        isSelected: selectedGoals.contains(goal)
+                        isSelected: viewModel.isGoalSelected(goal)
                     ) {
-                        withAnimation(.bloomBouncy) {
-                            if selectedGoals.contains(goal) {
-                                selectedGoals.remove(goal)
-                            } else {
-                                selectedGoals.insert(goal)
-                            }
-                        }
+                        viewModel.toggleGoal(goal)
                     }
                 }
             }

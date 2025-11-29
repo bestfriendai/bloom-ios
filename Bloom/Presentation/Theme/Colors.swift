@@ -14,7 +14,6 @@ extension Color {
     static let bloomGreen = Color(hex: "81C784")
 
     // MARK: - Background Colors
-    static let bloomBackground = Color(hex: "FAFAFA")
     static let bloomBackgroundDark = Color(hex: "121212")
 
     // MARK: - Semantic Colors
@@ -24,7 +23,7 @@ extension Color {
 
     // MARK: - Adaptive Background
     static let bloomAdaptiveBackground = Color(
-        light: bloomBackground,
+        light: .bloomBackground,
         dark: bloomBackgroundDark
     )
 

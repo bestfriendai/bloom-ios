@@ -8,13 +8,7 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @State private var name = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var confirmPassword = ""
-    @State private var agreeToTerms = false
-    @State private var isLoading = false
-    @State private var showPasswordMismatchError = false
+    @State private var viewModel = AuthViewModel()
 
     @Environment(\.dismiss) private var dismiss
 
@@ -51,13 +45,13 @@ struct SignUpView: View {
                     VStack(spacing: Spacing.md) {
                         CustomTextField(
                             placeholder: "Full Name",
-                            text: $name,
+                            text: $viewModel.signUpName,
                             icon: "person.fill"
                         )
 
                         CustomTextField(
                             placeholder: "Email",
-                            text: $email,
+                            text: $viewModel.signUpEmail,
                             icon: "envelope.fill",
                             keyboardType: .emailAddress,
                             autocapitalization: .never
@@ -65,19 +59,19 @@ struct SignUpView: View {
 
                         CustomTextField(
                             placeholder: "Password",
-                            text: $password,
+                            text: $viewModel.signUpPassword,
                             icon: "lock.fill",
                             isSecure: true
                         )
 
                         CustomTextField(
                             placeholder: "Confirm Password",
-                            text: $confirmPassword,
+                            text: $viewModel.signUpConfirmPassword,
                             icon: "lock.fill",
                             isSecure: true
                         )
 
-                        if showPasswordMismatchError {
+                        if viewModel.showPasswordMismatchError {
                             HStack {
                                 Image(systemName: "exclamationmark.triangle.fill")
                                     .font(.bloomBodySmall)
@@ -89,15 +83,27 @@ struct SignUpView: View {
                             .padding(.horizontal, Spacing.xs)
                         }
 
-                        PasswordRequirements(password: password)
+                        PasswordRequirementsView(requirements: viewModel.passwordRequirements)
+                    }
+
+                    if let errorMessage = viewModel.errorMessage {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.bloomBodySmall)
+                            Text(errorMessage)
+                                .font(.bloomBodySmall)
+                            Spacer()
+                        }
+                        .foregroundColor(.red)
+                        .padding(.horizontal, Spacing.xs)
                     }
 
                     VStack(spacing: Spacing.md) {
                         HStack(spacing: Spacing.sm) {
-                            Button(action: { agreeToTerms.toggle() }) {
-                                Image(systemName: agreeToTerms ? "checkmark.square.fill" : "square")
+                            Button(action: { viewModel.agreeToTerms.toggle() }) {
+                                Image(systemName: viewModel.agreeToTerms ? "checkmark.square.fill" : "square")
                                     .font(.bloomTitleMedium)
-                                    .foregroundColor(agreeToTerms ? .bloomPrimary : .bloomTextSecondary)
+                                    .foregroundColor(viewModel.agreeToTerms ? .bloomPrimary : .bloomTextSecondary)
                             }
 
                             VStack(alignment: .leading, spacing: 2) {
@@ -134,10 +140,10 @@ struct SignUpView: View {
                         PrimaryButton(
                             title: "Create Account",
                             action: handleSignUp,
-                            isLoading: isLoading
+                            isLoading: viewModel.isSigningUp
                         )
-                        .disabled(!isFormValid)
-                        .opacity(isFormValid ? 1.0 : 0.5)
+                        .disabled(!viewModel.isSignUpFormValid)
+                        .opacity(viewModel.isSignUpFormValid ? 1.0 : 0.5)
 
                         HStack(spacing: Spacing.xs) {
                             Rectangle()
@@ -189,57 +195,30 @@ struct SignUpView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private var isFormValid: Bool {
-        !name.isEmpty &&
-        !email.isEmpty &&
-        !password.isEmpty &&
-        password == confirmPassword &&
-        isPasswordValid &&
-        agreeToTerms
-    }
-
-    private var isPasswordValid: Bool {
-        password.count >= 8
-    }
-
     private func handleSignUp() {
-        guard password == confirmPassword else {
-            showPasswordMismatchError = true
-            return
-        }
-
-        showPasswordMismatchError = false
-        isLoading = true
-
-        // TODO: Implement sign up logic
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isLoading = false
+        Task {
+            await viewModel.signUp()
+            // TODO: Navigate to main app when authenticated
         }
     }
 
     private func handleAppleSignUp() {
-        // TODO: Implement Apple Sign Up
+        Task {
+            await viewModel.signUpWithApple()
+            // TODO: Navigate to main app when authenticated
+        }
     }
 
     private func handleGoogleSignUp() {
-        // TODO: Implement Google Sign Up
+        Task {
+            await viewModel.signUpWithGoogle()
+            // TODO: Navigate to main app when authenticated
+        }
     }
 }
 
-struct PasswordRequirements: View {
-    let password: String
-
-    private var hasMinLength: Bool {
-        password.count >= 8
-    }
-
-    private var hasUppercase: Bool {
-        password.range(of: "[A-Z]", options: .regularExpression) != nil
-    }
-
-    private var hasNumber: Bool {
-        password.range(of: "[0-9]", options: .regularExpression) != nil
-    }
+struct PasswordRequirementsView: View {
+    let requirements: PasswordRequirements
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
@@ -247,9 +226,9 @@ struct PasswordRequirements: View {
                 .font(.bloomLabelSmall)
                 .foregroundColor(.bloomTextSecondary)
 
-            RequirementRow(text: "At least 8 characters", isMet: hasMinLength)
-            RequirementRow(text: "One uppercase letter", isMet: hasUppercase)
-            RequirementRow(text: "One number", isMet: hasNumber)
+            RequirementRow(text: "At least 8 characters", isMet: requirements.hasMinLength)
+            RequirementRow(text: "One uppercase letter", isMet: requirements.hasUppercase)
+            RequirementRow(text: "One number", isMet: requirements.hasNumber)
         }
         .padding(.horizontal, Spacing.xs)
     }

@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct SignInView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @State private var isLoading = false
+    @State private var viewModel = AuthViewModel()
     @State private var navigateToSignUp = false
+    @State private var showResetPassword = false
 
     var body: some View {
         ZStack {
@@ -46,7 +45,7 @@ struct SignInView: View {
                     VStack(spacing: Spacing.md) {
                         CustomTextField(
                             placeholder: "Email",
-                            text: $email,
+                            text: $viewModel.signInEmail,
                             icon: "envelope.fill",
                             keyboardType: .emailAddress,
                             autocapitalization: .never
@@ -54,14 +53,14 @@ struct SignInView: View {
 
                         CustomTextField(
                             placeholder: "Password",
-                            text: $password,
+                            text: $viewModel.signInPassword,
                             icon: "lock.fill",
                             isSecure: true
                         )
 
                         HStack {
                             Spacer()
-                            Button(action: {}) {
+                            Button(action: { showResetPassword = true }) {
                                 Text("Forgot Password?")
                                     .font(.bloomBodyMedium)
                                     .foregroundColor(.bloomPrimary)
@@ -69,11 +68,23 @@ struct SignInView: View {
                         }
                     }
 
+                    if let errorMessage = viewModel.errorMessage {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.bloomBodySmall)
+                            Text(errorMessage)
+                                .font(.bloomBodySmall)
+                            Spacer()
+                        }
+                        .foregroundColor(.red)
+                        .padding(.horizontal, Spacing.xs)
+                    }
+
                     VStack(spacing: Spacing.md) {
                         PrimaryButton(
                             title: "Sign In",
                             action: handleSignIn,
-                            isLoading: isLoading
+                            isLoading: viewModel.isSigningIn
                         )
 
                         HStack(spacing: Spacing.xs) {
@@ -128,22 +139,38 @@ struct SignInView: View {
         .navigationDestination(isPresented: $navigateToSignUp) {
             SignUpView()
         }
+        .alert("Reset Password", isPresented: $showResetPassword) {
+            TextField("Email", text: $viewModel.signInEmail)
+            Button("Cancel", role: .cancel) { }
+            Button("Send Reset Link") {
+                Task {
+                    await viewModel.resetPassword(email: viewModel.signInEmail)
+                }
+            }
+        } message: {
+            Text("Enter your email to receive a password reset link")
+        }
     }
 
     private func handleSignIn() {
-        isLoading = true
-        // TODO: Implement sign in logic
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isLoading = false
+        Task {
+            await viewModel.signIn()
+            // TODO: Navigate to main app when authenticated
         }
     }
 
     private func handleAppleSignIn() {
-        // TODO: Implement Apple Sign In
+        Task {
+            await viewModel.signInWithApple()
+            // TODO: Navigate to main app when authenticated
+        }
     }
 
     private func handleGoogleSignIn() {
-        // TODO: Implement Google Sign In
+        Task {
+            await viewModel.signInWithGoogle()
+            // TODO: Navigate to main app when authenticated
+        }
     }
 }
 
