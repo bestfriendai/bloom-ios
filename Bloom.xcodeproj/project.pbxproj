@@ -133,6 +133,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 830989F82ED6A04000929825 /* Build configuration list for PBXNativeTarget "Bloom" */;
 			buildPhases = (
+				836E9BE12EE12E3F007A499F /* SwiftLint */,
 				830989D32ED6A03F00929825 /* Sources */,
 				830989D42ED6A03F00929825 /* Frameworks */,
 				830989D52ED6A03F00929825 /* Resources */,
@@ -277,6 +278,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		836E9BE12EE12E3F007A499F /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SCRIPT_INPUT_FILE_0=\"$SRCROOT/.swiftlint.yml\"\nif command -v swiftlint >/dev/null 2>&1; then\n  swiftlint --fix lint \"$SRCROOT\"\nelse\n  echo \"warning: SwiftLint not installed\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		830989D32ED6A03F00929825 /* Sources */ = {
@@ -446,6 +469,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = S6GR66BQ4K;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bloom/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -481,6 +505,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = S6GR66BQ4K;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bloom/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";

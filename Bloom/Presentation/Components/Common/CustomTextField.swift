@@ -10,7 +10,7 @@ import SwiftUI
 struct CustomTextField: View {
     let placeholder: String
     @Binding var text: String
-    var icon: String? = nil
+    var icon: String?
     var isSecure: Bool = false
     var keyboardType: UIKeyboardType = .default
     var autocapitalization: TextInputAutocapitalization = .sentences

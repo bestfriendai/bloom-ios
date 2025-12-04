@@ -9,55 +9,55 @@ import Foundation
 import SwiftData
 
 //// MARK: - User Repository Key
-//@MainActor
-//struct UserRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct UserRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: UserRepositoryProtocol = UserRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Goal Repository Key
-//@MainActor
-//struct GoalRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct GoalRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: GoalRepositoryProtocol = GoalRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Workout Repository Key
-//@MainActor
-//struct WorkoutRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct WorkoutRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: WorkoutRepositoryProtocol = WorkoutRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Exercise Repository Key
-//@MainActor
-//struct ExerciseRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct ExerciseRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: ExerciseRepositoryProtocol = ExerciseRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Workout Session Repository Key
-//@MainActor
-//struct WorkoutSessionRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct WorkoutSessionRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: WorkoutSessionRepositoryProtocol = WorkoutSessionRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Exercise Record Repository Key
-//@MainActor
-//struct ExerciseRecordRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct ExerciseRecordRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: ExerciseRecordRepositoryProtocol = ExerciseRecordRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Daily Task Repository Key
-//@MainActor
-//struct DailyTaskRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct DailyTaskRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: DailyTaskRepositoryProtocol = DailyTaskRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Scheduled Workout Repository Key
-//@MainActor
-//struct ScheduledWorkoutRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct ScheduledWorkoutRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: ScheduledWorkoutRepositoryProtocol = ScheduledWorkoutRepository(container: ModelContainerHelper.shared.container)
-//}
+// }
 //
 //// MARK: - Progress Metrics Repository Key
-//@MainActor
-//struct ProgressMetricsRepositoryKey: @preconcurrency InjectionKey {
+// @MainActor
+// struct ProgressMetricsRepositoryKey: @preconcurrency InjectionKey {
 //    static var currentValue: ProgressMetricsRepositoryProtocol = ProgressMetricsRepository(container: ModelContainerHelper.shared.container)
-//}
+// }

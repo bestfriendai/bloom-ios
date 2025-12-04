@@ -17,7 +17,7 @@ struct Injected<T: Sendable> {
             InjectedValues[keyPath] = newValue
         }
     }
-    
+
     init(_ keyPath: WritableKeyPath<InjectedValues, T>) {
         self.keyPath = keyPath
     }
