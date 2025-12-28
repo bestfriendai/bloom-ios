@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SignInView: View {
+    @Environment(AppState.self) private var appState
     @State private var viewModel = AuthViewModel()
     @State private var navigateToSignUp = false
     @State private var showResetPassword = false
@@ -16,6 +17,9 @@ struct SignInView: View {
         ZStack {
             Color.bloomAdaptiveBackground
                 .ignoresSafeArea()
+                .onTapGesture {
+                    hideKeyboard()
+                }
 
             ScrollView {
                 VStack(spacing: Spacing.xl) {
@@ -153,24 +157,43 @@ struct SignInView: View {
     }
 
     private func handleSignIn() {
+        hideKeyboard()
         Task {
             await viewModel.signIn()
-            // TODO: Navigate to main app when authenticated
+            if viewModel.isAuthenticated, let user = viewModel.currentUser {
+                HapticManager.shared.success()
+                appState.signIn(user: user)
+            }
         }
     }
 
     private func handleAppleSignIn() {
         Task {
             await viewModel.signInWithApple()
-            // TODO: Navigate to main app when authenticated
+            if viewModel.isAuthenticated, let user = viewModel.currentUser {
+                HapticManager.shared.success()
+                appState.signIn(user: user)
+            }
         }
     }
 
     private func handleGoogleSignIn() {
         Task {
             await viewModel.signInWithGoogle()
-            // TODO: Navigate to main app when authenticated
+            if viewModel.isAuthenticated, let user = viewModel.currentUser {
+                HapticManager.shared.success()
+                appState.signIn(user: user)
+            }
         }
+    }
+
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
 
@@ -180,7 +203,10 @@ struct SocialSignInButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            HapticManager.shared.buttonTap()
+            action()
+        } label: {
             HStack(spacing: Spacing.xs) {
                 Image(systemName: icon)
                     .font(.bloomTitleMedium)
@@ -197,6 +223,8 @@ struct SocialSignInButton: View {
             .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
         }
         .buttonStyle(ScaleButtonStyle())
+        .accessibilityLabel("Sign in with \(title)")
+        .accessibilityHint("Double tap to sign in using your \(title) account")
     }
 }
 

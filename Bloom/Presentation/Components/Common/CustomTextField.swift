@@ -41,11 +41,16 @@ struct CustomTextField: View {
             .focused($isFocused)
 
             if isSecure {
-                Button(action: { isPasswordVisible.toggle() }) {
+                Button {
+                    HapticManager.shared.toggle()
+                    isPasswordVisible.toggle()
+                } label: {
                     Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
                         .font(.bloomBodyLarge)
                         .foregroundColor(.bloomTextSecondary)
                 }
+                .accessibilityLabel(isPasswordVisible ? "Hide password" : "Show password")
+                .accessibilityHint("Double tap to toggle password visibility")
             }
         }
         .padding(.horizontal, Spacing.md)
@@ -57,6 +62,9 @@ struct CustomTextField: View {
         )
         .cornerRadius(Spacing.cornerRadiusSmall)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(placeholder)
+        .accessibilityValue(text.isEmpty ? "Empty" : (isSecure && !isPasswordVisible ? "Secure text entered" : text))
     }
 }
 
