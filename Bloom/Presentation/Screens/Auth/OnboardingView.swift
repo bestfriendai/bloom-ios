@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Environment(AppState.self) private var appState
     @State private var viewModel = OnboardingViewModel()
     @State private var navigateToAuth = false
 
@@ -53,6 +54,8 @@ struct OnboardingView: View {
                             PrimaryButton(title: "Get Started") {
                                 Task {
                                     await viewModel.completeOnboarding()
+                                    HapticManager.shared.success()
+                                    appState.completeOnboarding()
                                     navigateToAuth = true
                                 }
                             }
@@ -61,13 +64,16 @@ struct OnboardingView: View {
                         }
 
                         if !viewModel.isFirstPage {
-                            Button(action: {
+                            Button {
+                                HapticManager.shared.buttonTap()
                                 viewModel.previousPage()
-                            }) {
+                            } label: {
                                 Text("Back")
                                     .font(.bloomBodyLarge)
                                     .foregroundColor(.bloomTextSecondary)
                             }
+                            .accessibilityLabel("Go back")
+                            .accessibilityHint("Returns to the previous screen")
                         }
                     }
                     .padding(.horizontal, Spacing.screenPadding)
@@ -201,7 +207,10 @@ struct GoalCard: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            HapticManager.shared.selection()
+            action()
+        } label: {
             VStack(spacing: Spacing.sm) {
                 ZStack {
                     Circle()
@@ -229,8 +238,13 @@ struct GoalCard: View {
             .cornerRadius(Spacing.cornerRadius)
             .shadow(color: Color.black.opacity(isSelected ? 0.1 : 0.05), radius: isSelected ? 12 : 8, x: 0, y: 4)
             .scaleEffect(isSelected ? 1.02 : 1.0)
+            .animation(.bloomBouncy, value: isSelected)
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel(goal.type.rawValue)
+        .accessibilityValue(isSelected ? "Selected" : "Not selected")
+        .accessibilityHint("Double tap to \(isSelected ? "deselect" : "select") this wellness goal")
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
 

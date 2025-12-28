@@ -85,7 +85,24 @@ enum WellnessGoalType: String, Codable, CaseIterable {
     case mentalHealth = "Mental Health"
     case productivity = "Productivity"
 
+    /// SF Symbol name for use with Image(systemName:)
     var icon: String {
+        switch self {
+        case .improveSleep: return "moon.zzz.fill"
+        case .reduceStress: return "leaf.fill"
+        case .increaseEnergy: return "bolt.fill"
+        case .betterMood: return "face.smiling.fill"
+        case .buildHabits: return "checkmark.circle.fill"
+        case .mindfulness: return "sparkles"
+        case .workLifeBalance: return "scale.3d"
+        case .physicalHealth: return "figure.run"
+        case .mentalHealth: return "brain.head.profile"
+        case .productivity: return "target"
+        }
+    }
+
+    /// Emoji representation for display in text contexts
+    var emoji: String {
         switch self {
         case .improveSleep: return "😴"
         case .reduceStress: return "🧘"

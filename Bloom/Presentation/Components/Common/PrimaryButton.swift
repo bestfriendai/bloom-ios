@@ -12,6 +12,7 @@ struct PrimaryButton: View {
     let action: () -> Void
     var isLoading: Bool = false
     var style: ButtonStyle = .primary
+    var accessibilityHint: String?
 
     enum ButtonStyle {
         case primary
@@ -20,7 +21,10 @@ struct PrimaryButton: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            HapticManager.shared.buttonTap()
+            action()
+        } label: {
             HStack(spacing: Spacing.xs) {
                 if isLoading {
                     ProgressView()
@@ -44,6 +48,9 @@ struct PrimaryButton: View {
         }
         .disabled(isLoading)
         .buttonStyle(ScaleButtonStyle())
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint ?? (isLoading ? "Loading, please wait" : ""))
+        .accessibilityAddTraits(.isButton)
     }
 
     private var backgroundColor: Color {
